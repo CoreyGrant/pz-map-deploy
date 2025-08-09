@@ -72257,8 +72257,8 @@ input[type="checkbox"] {
 
         pan(x, y) {
             var zoomModifier = this.zoomLevels[this.zoom];
-            this.centreX += (x * 500) / zoomModifier;
-            this.centreY += (y * 500) / zoomModifier;
+            this.centreX += (x * 2000) / zoomModifier;
+            this.centreY += (y * 2000) / zoomModifier;
             this.updateViewbox();
         }
 
@@ -72658,7 +72658,7 @@ class SaveManager {
         Object.keys(oldState).forEach(id => updatePolygon(id, true));
         Object.keys(stateManager.state).forEach(id => updatePolygon(id));
     }
-    new SaveManager(stateManager, saveManagerChange);
+    const saveManager = new SaveManager(stateManager, saveManagerChange);
     const popover = new Popover(svg, stateManager, metadata, onChange);
 
     const buildings = svg.querySelectorAll("polygon[key='building']")
@@ -72737,6 +72737,24 @@ class SaveManager {
         }
         
     }
+
+    // hacky reset behaviour
+    const saveManagerNewLabel = document.querySelector("#save-manager-new label")
+    let tapCounter = 0;
+    let timeout;
+    saveManagerNewLabel.addEventListener('touchstart', function () {
+        tapCounter++;
+        clearTimeout(timeout);
+        timeout = setTimeout(() => tapCounter = 0, 1000);
+    });
+    saveManagerNewLabel.addEventListener('touchend', function () {
+        if (tapCounter > 8) {
+            if (confirm("Delete all saved data?")) {
+                localStorage.clear();
+                window.location.reload();
+            }
+        }
+    });
 }());
 
 
