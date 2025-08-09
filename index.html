@@ -243,8 +243,8 @@ input[type="checkbox"] {
     }
 
     #map-control {
-        width: 72px;
-        height: 92px;
+        width: 102px;
+        height: 132px;
         padding: 4px;
         background-color: rgb(216, 211, 185);
         position: absolute;
@@ -263,43 +263,43 @@ input[type="checkbox"] {
     }
 
     #map-control-up, #map-control-down, #map-control-left, #map-control-right {
-        width: 20px;
-        height: 20px;
+        width: 30px;
+        height: 30px;
     }
 
     #map-control-in, #map-control-out {
-        width: 30px;
-        height: 20px;
+        width: 45px;
+        height: 30px;
     }
 
     #map-control-up {
         top: 4px;
-        left: 24px;
+        left: 34px;
     }
 
     #map-control-down {
-        top: 44px;
-        left: 24px;
+        top: 64px;
+        left: 34px;
     }
 
     #map-control-left {
         left: 4px;
-        top: 24px;
+        top: 34px;
     }
 
     #map-control-right {
-        left: 44px;
-        top: 24px;
+        left: 64px;
+        top: 34px;
     }
 
     #map-control-in {
         left: 4px;
-        top: 64px;
+        top: 94px;
     }
 
     #map-control-out {
-        left: 34px;
-        top: 64px;
+        left: 49px;
+        top: 94px;
     }
 
     #save-manager {
@@ -72394,14 +72394,14 @@ input[type="checkbox"] {
             });
 
             this.svg.addEventListener("touchstart", (ev) => {
-                if (ev.button == 0) {
-                    this.mousedown = true;
-                    this.mousedownPosLast = { x: ev.clientX, y: ev.clientY };
-                }
+                this.mousedown = true;
+                var touch = ev.touches[0];
+                this.mousedownPosLast = { x: touch.clientX, y: touch.clientY };
             });
             this.svg.addEventListener("touchmove", (ev) => {
                 if (this.mousedown && this.mousedownPosLast) {
-                    const currentPos = { x: ev.clientX, y: ev.clientY };
+                    var touch = ev.touches[0];
+                    const currentPos = { x: touch.clientX, y: touch.clientY };
                     const baseDiff = {
                         x: this.mousedownPosLast.x - currentPos.x,
                         y: this.mousedownPosLast.y - currentPos.y
