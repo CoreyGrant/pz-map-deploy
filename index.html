@@ -172,6 +172,7 @@ input[type="checkbox"] {
 
 #save-manager {
     display: flex;
+    flex-direction: column;
     padding: 8px;
     width: calc(100% - 16px);
     margin-left: 8px;
@@ -187,7 +188,6 @@ input[type="checkbox"] {
 }
 
 #save-manager-new label{
-    margin-left: 8px;
 }
 
 #save-manager-new input{
@@ -90192,15 +90192,15 @@ input[type="checkbox"] {
                 <p id="pop-over-name"></p>
                 <div id="pop-over-checkboxes">
                     <div id="pop-over-survivor">
-                        <label for="pop-over-survivor-input">Survivor</label>
+                        <label for="pop-over-survivor-input"><span style="text-decoration: underline">S</span>urvivor</label>
                         <input type="checkbox" id="pop-over-survivor-input" />
                     </div>
                     <div id="pop-over-looted">
-                        <label for="pop-over-looted-input">Looted</label>
+                        <label for="pop-over-looted-input"><span style="text-decoration: underline">L</span>ooted</label>
                         <input type="checkbox" id="pop-over-looted-input" />
                     </div>
                     <div id="pop-over-base">
-                        <label for="pop-over-base-input">Base</label>
+                        <label for="pop-over-base-input"><span style="text-decoration: underline">B</span>ase</label>
                         <input type="checkbox" id="pop-over-base-input" />
                     </div>
                 </div>
@@ -90214,14 +90214,18 @@ input[type="checkbox"] {
             </div>
             <fieldset id="save-manager">
                 <legend>Save</legend>
-                <select id="save-manager-select"></select>
+                <div style="display: flex;">
+                    <select id="save-manager-select"></select>
+                    <div id="save-manager-show-new">
+                        <button id="save-manager-show-new-add">Add</button>
+                        <button id="save-manager-show-new-remove">Remove</button>
+                    </div>
+                </div>
                 <div id="save-manager-new" style="display: none;">
                     <label>Name</label>
                     <input type="text" />
-                    <button>Save</button>
-                </div>
-                <div id="save-manager-show-new">
-                    <button>Add</button>
+                    <button id="save-manager-new-save">Save</button>
+                    <button id="save-manager-new-cancel">Cancel</button>
                 </div>
             </fieldset>
             <fieldset id="toolbar">
@@ -90295,7 +90299,6 @@ window.metadata = {"rooms":{"12556,1111.12560,1111.12560,1118.12556,1118":["groc
 
         zoomIn() {
             this.zoom = Math.min(this.zoom + 1, this.zoomLevels.length - 1);
-            console.log(this.zoom);
             this.updateViewbox();
         }
 
@@ -90412,6 +90415,9 @@ window.metadata = {"rooms":{"12556,1111.12560,1111.12560,1118.12556,1118":["groc
         initMouseControls() {
             
             this.svg.addEventListener("wheel", (ev) => {
+                var scaledPos = this.scaleScreenToSvgAbsolute({ x: ev.clientX, y: ev.clientY });
+                this.centreX = scaledPos.x;
+                this.centreY = scaledPos.y;
                 if (ev.deltaY > 0) {
                     this.zoomOut();
                 } else {
@@ -90428,7 +90434,7 @@ window.metadata = {"rooms":{"12556,1111.12560,1111.12560,1118.12556,1118":["groc
                 if (this.mousedown && this.mousedownPosLast) {
                     const currentPos = { x: ev.clientX, y: ev.clientY };
                     const baseDiff = {
-                        x: this.mousedownPosLast.x - currentPos.x,
+                        x: (this.mousedownPosLast.x - currentPos.x) * 1.58,
                         y: this.mousedownPosLast.y - currentPos.y
                     }
                     if (Math.sqrt(baseDiff.x * baseDiff.x + baseDiff.y * baseDiff.y) < 3) {
@@ -90461,7 +90467,7 @@ window.metadata = {"rooms":{"12556,1111.12560,1111.12560,1118.12556,1118":["groc
                         var touch = ev.touches[0];
                         const currentPos = { x: touch.clientX, y: touch.clientY };
                         const baseDiff = {
-                            x: this.mousedownPosLast.x - currentPos.x,
+                            x: (this.mousedownPosLast.x - currentPos.x) * 1.58,
                             y: this.mousedownPosLast.y - currentPos.y
                         }
                         if (Math.sqrt(baseDiff.x * baseDiff.x + baseDiff.y * baseDiff.y) < 3) {
@@ -90517,8 +90523,8 @@ window.metadata = {"rooms":{"12556,1111.12560,1111.12560,1118.12556,1118":["groc
             var centreX = this.centreX - width / 2;
             var centreY = this.centreY - height / 2;
             return {
-                x: (centreX + scaled.x).toFixed(0),
-                y: (centreY + scaled.y).toFixed(0)
+                x: +(centreX + scaled.x).toFixed(0),
+                y: +(centreY + scaled.y).toFixed(0)
             };
         }
     }
@@ -90530,23 +90536,33 @@ window.metadata = {"rooms":{"12556,1111.12560,1111.12560,1118.12556,1118":["groc
         stateManager;
         saveManagerNew;
         saveManagerShowNew;
+        saveManagerShowNewAdd;
+        saveManagerShowNewRemove;
         newSaveInput;
         newSaveButton;
+        newCancelButton;
+
         saveSelect;
         onChange;
         constructor(stateManager, onChange) {
             this.stateManager = stateManager;
             this.onChange = onChange;
             this.newSaveInput = document.querySelector("#save-manager-new input");
-            this.newSaveButton = document.querySelector("#save-manager-new button");
+            this.newSaveButton = document.querySelector("#save-manager-new-save");
+            this.newCancelButton = document.querySelector("#save-manager-new-cancel");
             this.saveSelect = document.getElementById("save-manager-select");
             this.saveManagerShowNew = document.getElementById("save-manager-show-new");
+            this.saveManagerShowNewAdd = document.getElementById("save-manager-show-new-add");
+            this.saveManagerShowNewRemove = document.getElementById("save-manager-show-new-remove");
             this.saveManagerNew = document.getElementById("save-manager-new");
             const currentSave = this.stateManager.getLastSave();
             this.newSaveButton.addEventListener("click", () => this.addNewSave());
             this.setSelectOptions(currentSave);
             this.saveSelect.addEventListener("change", (e) => this.loadSave(e.target.value));
-            this.saveManagerShowNew.querySelector("button").addEventListener("click", () => this.showNew())
+            this.saveManagerShowNewAdd.addEventListener("click", () => this.showNew());
+            this.saveManagerShowNewRemove.addEventListener("click", () => this.remove());
+            this.newCancelButton.addEventListener("click", () => this.cancel());
+
         }
         showNew() {
             this.saveManagerNew.style.display = "initial";
@@ -90569,6 +90585,21 @@ window.metadata = {"rooms":{"12556,1111.12560,1111.12560,1118.12556,1118":["groc
             this.setSelectOptions(inputValue);
             this.saveManagerNew.style.display = "none";
             this.saveManagerShowNew.style.display = "initial";
+            this.onChange(oldState);
+        }
+        cancel() {
+            this.newSaveInput.value = "";
+            this.saveManagerNew.style.display = "none";
+            this.saveManagerShowNew.style.display = "initial";
+        }
+        remove() {
+            const oldState = this.stateManager.state;
+            const saveToRemove = this.saveSelect.value;
+            if (saveToRemove == "default") { return; }
+            const confirmed = confirm("Are you sure you want to delete " + saveToRemove);
+            if (!confirmed) { return; }
+            const newSaveKey = this.stateManager.removeSave(saveToRemove);
+            this.setSelectOptions(newSaveKey);
             this.onChange(oldState);
         }
         loadSave(value) {
@@ -90647,13 +90678,27 @@ class StateManager {
             .filter(x => x !== "last-save");
         return saves;
     }
+    removeSave(name) {
+        localStorage.removeItem(name);
+        const otherSaves = Object.keys(localStorage).filter(x => x !== 'last-save');
+        if (otherSaves.length == 0) {
+            this.saveKey = "default";
+        } else {
+            this.saveKey = otherSaves[0];
+        }
+        this.saveLastSave(this.saveKey);
+        this.state = this.loadState();
+        return this.saveKey;
+    }
 }
 
     window.StateManager = StateManager;
     window.stateManager = new StateManager();
 } ())</script>
     <script>
-(function() {
+(function () {
+    
+
     class Popover {
         popover;
         popoverDefault;
@@ -90729,11 +90774,30 @@ class StateManager {
             // put the popover next to it, wherever it fits
             this.popover.style.display = "initial";
             this.popoverDefault.style.display = "none";
+            document.addEventListener('keydown', this.keyPressFunc);
         }
 
         hide() {
             this.popover.style.display = "none";
             this.popoverDefault.style.display = "initial";
+            document.removeEventListener('keydown', this.keyPressFunc);
+        }
+        keyPressFunc = this.keyPress.bind(this);
+        keyPress(ev) {
+            switch (ev.key) {
+                case "s":
+                    this.popoverSurvivorCheckbox.checked = !this.popoverSurvivorCheckbox.checked;
+                    this.popoverSurvivorCheckbox.dispatchEvent(new Event("change"));
+                    break;
+                case "b":
+                    this.popoverBaseCheckbox.checked = !this.popoverBaseCheckbox.checked;
+                    this.popoverBaseCheckbox.dispatchEvent(new Event("change"));
+                    break;
+                case "l":
+                    this.popoverLootedCheckbox.checked = !this.popoverLootedCheckbox.checked;
+                    this.popoverLootedCheckbox.dispatchEvent(new Event("change"));
+                    break;
+            }
         }
 
         getName(id) {
@@ -90894,6 +90958,7 @@ class StateManager {
     }
     const mapSvg = new window.MapSvg(svg, mapConfig);
     const saveManagerChange = (oldState) => {
+        console.log(oldState, stateManager.state);
         Object.keys(oldState).forEach(id => updatePolygon(id, true));
         Object.keys(stateManager.state).forEach(id => updatePolygon(id));
     }
@@ -90965,6 +91030,7 @@ class StateManager {
             const polygon = document.getElementById(id);
             polygon.setAttribute("stroke", "rgb(0,0,0)");
             polygon.setAttribute("stroke-dasharray", "none");
+            polygon.setAttribute("stroke-width", "1");
             return;
         }
         const stateItem = stateManager.state[id];
@@ -90990,23 +91056,28 @@ class StateManager {
         }
         const polygon = document.getElementById(id);
         if (stateItem.looted) {
-            polygon.setAttribute("stroke-dasharray", "5,5,5");
+            polygon.setAttribute("stroke-dasharray", "2");
         } else {
             polygon.setAttribute("stroke-dasharray", "none");
         }
         if (stateItem.survivor) {
             polygon.setAttribute("stroke", "rgb(125,0,0)");
+            polygon.setAttribute("stroke-width", "2");
         } else {
             polygon.setAttribute("stroke", "rgb(0,0,0)");
+            polygon.setAttribute("stroke-width", "2");
         }
         if (stateItem.base) {
             polygon.setAttribute("stroke", "rgb(0,125,0)");
             polygon.setAttribute("stroke-dasharray", "none");
+            polygon.setAttribute("stroke-width", "2");
         } else {
             if (stateItem.survivor) {
                 polygon.setAttribute("stroke", "rgb(125,0,0)");
+                polygon.setAttribute("stroke-width", "2");
             } else {
                 polygon.setAttribute("stroke", "rgb(0,0,0)");
+                polygon.setAttribute("stroke-width", "1");
             }
         }
         
