@@ -192,7 +192,12 @@ input[type="checkbox"] {
 #save-manager-new{
     display: flex;
 }
-
+legend{
+    cursor: pointer;
+}
+fieldset.collapsed *:not(legend){
+    display: none !important;
+}
 #save-manager-new label{
 }
 
@@ -264,8 +269,6 @@ input[type="checkbox"] {
     #pop-over-notes {
         height: 100px;
     }
-
-    
 
     #pop-over-rooms {
         margin-top: 4px;
@@ -10441,6 +10444,15 @@ class StateManager {
         
     }
 
+    document.querySelectorAll("legend").forEach(x => x.addEventListener('click', function () {
+        const parent = this.parentNode;
+        const className = parent.className;
+        if (className === "collapsed") {
+            parent.className = "";
+        } else {
+            parent.className = "collapsed";
+        }
+    }));
     
     // hacky reset behaviour
     function setupReset() {
