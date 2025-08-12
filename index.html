@@ -198,7 +198,6 @@ input[type="checkbox"] {
 
 #save-manager-new input{
     width: 200px;
-    margin-left: 8px;
 }
 
 #save-manager-new button{
@@ -247,7 +246,7 @@ input[type="checkbox"] {
     }
 
     #pop-over, #pop-over-default{
-        height: 45%;
+        height: 42%;
         padding: 4px;
     }
 
@@ -275,7 +274,7 @@ input[type="checkbox"] {
     }
 
     #pop-over-notes-container label {
-        font-size: 12px;
+        font-size: 10px;
     }
 
     #map-control {
@@ -329,13 +328,18 @@ input[type="checkbox"] {
         top: 100px;
     }
     #save-manager{
-        padding: 4px;
         margin-left: 4px;
         margin-right: 4px;
         flex-direction: column;
+        
+    }
+
+    #save-manager-new{
+        font-size: 12px;
     }
     #save-manager-new input {
-        width: 80px;
+        margin-left: 0;
+        width: 100%;
     }
 
     #save-manager-new-container{
@@ -343,7 +347,7 @@ input[type="checkbox"] {
     }
 
     #save-manager-new button {
-        width: 40px;
+        width: 48%;
     }
     #save-manager-select {
         min-width: 100px;
@@ -9421,7 +9425,6 @@ input[type="checkbox"] {
                     </div>
                 </div>
                 <div id="save-manager-new" style="display: none;">
-                    <label>Name</label>
                     <input type="text" />
                     <button id="save-manager-new-save">Save</button>
                     <button id="save-manager-new-cancel">Cancel</button>
@@ -9810,6 +9813,7 @@ input[type="checkbox"] {
         }
         showNew() {
             this.saveManagerNew.style.display = "initial";
+            this.saveSelect.style.display = "none";
             this.saveManagerShowNew.style.display = "none";
         }
         addNewSave() {
@@ -9828,12 +9832,14 @@ input[type="checkbox"] {
             this.stateManager.state = this.stateManager.loadState();
             this.setSelectOptions(inputValue);
             this.saveManagerNew.style.display = "none";
+            this.saveSelect.style.display = "initial";
             this.saveManagerShowNew.style.display = "initial";
             this.onChange(oldState);
         }
         cancel() {
             this.newSaveInput.value = "";
             this.saveManagerNew.style.display = "none";
+            this.saveSelect.style.display = "initial";
             this.saveManagerShowNew.style.display = "initial";
         }
         remove() {
