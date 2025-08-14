@@ -487,6 +487,45 @@ fieldset.collapsed *:not(legend){
         </div>
     </div>
     
+    <script>(function () {
+    class QueryState {
+        state;
+        constructor() {
+            this.loadQuery();
+        }
+
+        loadQuery() {
+            const query = window.location.search;
+            const parts = query.substring(1).split("&");
+            const state = {};
+            for (var part of parts) {
+                if (!part.length) { continue;s }
+                const keyValue = part.split("=");
+                const key = keyValue[0];
+                const value = keyValue[1];
+                state[key] = value;
+            }
+            this.state = state;
+        }
+
+        updateQuery(newStateObj) {
+            Object.assign(this.state, newStateObj);
+            let newState = "?";
+            for (var stateKey in this.state) {
+                if (!stateKey || !stateKey.length) { continue; }
+                var stateValue = this.state[stateKey];
+                newState += stateKey + "=" + stateValue + "&";
+            }
+            window.history.replaceState(
+                null,
+                "",
+                window.location.pathname + newState.substring(0, newState.length - 1));
+        }
+    }
+
+    window.QueryState = QueryState;
+
+}())</script>
     <script>
 (function() {
     const mapConfig = {
@@ -516,10 +555,11 @@ fieldset.collapsed *:not(legend){
         centreX;
         centreY;
         pt;
-        constructor(svg, mapConfig) {
+        constructor(svg, mapConfig, queryState) {
             this.svg = svg;
             this.pt = svg.createSVGPoint();
             this.mapConfig = mapConfig;
+            this.queryState = queryState;
             this.initFromConfig(mapConfig);
             this.loadQuery();
             this.updateViewbox(true);
@@ -764,13 +804,10 @@ fieldset.collapsed *:not(legend){
         }
 
         loadQuery() {
-            const query = window.location.search;
-            const parts = query.substring(1).split("&");
+            const queryState = this.queryState.state;
             let change = false;
-            for (const part of parts) {
-                const queryParts = part.split("=");
-                const name = queryParts[0].toLowerCase();
-                const value = queryParts[1];
+            for (const name in queryState) {
+                const value = queryState[name];
                 if (name == "centrex") {
                     this.centreX = +value;
                     change = true;
@@ -793,8 +830,12 @@ fieldset.collapsed *:not(legend){
         }
         debouncedUpdateQuery = debounce.bind(this)(this.updateQuery);
         updateQuery() {
-            const newState = `?centreX=${this.centreX.toFixed(0)}&centreY=${this.centreY.toFixed(0)}&zoom=${this.zoom}`;
-            window.history.replaceState(null, "", window.location.pathname + newState);
+            const newState = {
+                centreX: this.centreX.toFixed(0),
+                centreY: this.centreY.toFixed(0),
+                zoom: this.zoom
+            };
+            this.queryState.updateQuery(newState);
         }
 
         zoomScale(val) {
@@ -1336,13 +1377,7 @@ fieldset.collapsed *:not(legend){
             orientation: "horizontal",
             fontSize: "200px",
             color: "rgba(0,0,0, 0.5)",
-        }, obj, {
-            // apply offset to zero out the top right
-            location: {
-                x: obj.location.x - 3000,
-                y: obj.location.y - 900
-            }
-        });
+        }, obj);
     }
     function townName(obj) {
         return Object.assign({
@@ -1351,39 +1386,67 @@ fieldset.collapsed *:not(legend){
             color: "rgba(0,0,0, 0.5)"
         }, obj);
     }
-    const annotations = [
-        cityName({
-            location: { x: 9500 , y: 9180 },
-            text: "Muldraugh",
-        }),
-        cityName({
-            location: { x: 6100, y: 5150 },
-            text: "Riverside",
-        }),
-        cityName({
-            location: { x: 7100, y: 11400 },
-            text: "Rosewood",
-        }),
-        cityName({
-            location: { x: 11200, y: 6550 },
-            text: "West Point",
-        }),
-        cityName({
-            location: { x: 12600, y: 1080 },
-            text: "Louisville",
-        }),
-        cityName({
-            location: { x: 9220, y: 12550 },
-            text: "March Ridge",
-        }),
-    ];
+    const annotations = {
+        "41": [
+            //cityName({
+            //    location: { x: 9500, y: 9180 },
+            //    text: "Muldraugh",
+            //}),
+            //cityName({
+            //    location: { x: 6100, y: 5150 },
+            //    text: "Riverside",
+            //}),
+            //cityName({
+            //    location: { x: 7100, y: 11400 },
+            //    text: "Rosewood",
+            //}),
+            //cityName({
+            //    location: { x: 11200, y: 6550 },
+            //    text: "West Point",
+            //}),
+            //cityName({
+            //    location: { x: 12600, y: 1080 },
+            //    text: "Louisville",
+            //}),
+            //cityName({
+            //    location: { x: 9220, y: 12550 },
+            //    text: "March Ridge",
+            //}),
+        ],
+        "42": [
+            //cityName({
+            //    location: { x: 8100, y: 7780},
+            //    text: "Muldraugh",
+            //}),
+            //cityName({
+            //    location: { x: 6100, y: 5150 },
+            //    text: "Riverside",
+            //}),
+            //cityName({
+            //    location: { x: 7100, y: 11400 },
+            //    text: "Rosewood",
+            //}),
+            //cityName({
+            //    location: { x: 11200, y: 6550 },
+            //    text: "West Point",
+            //}),
+            //cityName({
+            //    location: { x: 12600, y: 1080 },
+            //    text: "Louisville",
+            //}),
+            //cityName({
+            //    location: { x: 9220, y: 12550 },
+            //    text: "March Ridge",
+            //}),
+        ]
+    };
     
 
     class TextAnnotater {
         svg;
-        constructor(svg) {
+        constructor(svg, version) {
             this.svg = svg;
-            for (const annotation of annotations) {
+            for (const annotation of annotations[version.toString()]) {
                 const text = document.createElementNS("http://www.w3.org/2000/svg", "text");
                 text.setAttribute("x", annotation.location.x);
                 text.setAttribute("y", annotation.location.y);
@@ -1578,17 +1641,18 @@ fieldset.collapsed *:not(legend){
     }
 
     setupReset();
+    const queryState = new QueryState();
     async function loadVersion(version) {
         const infoFile = await fetch(`b${version}-info.json`).then(x => x.json());
         const metadataFile = await fetch(`b${version}-metadata.json`).then(x => x.json());
         const svgFile = await fetch(`b${version}-svg.svg`).then(x => x.text());
         return { infoFile, metadataFile, svgFile };
     }
-    async function initApp(info, metadata, version) {
+    async function initApp(svgContainer, info, metadata, version) {
         const svg = svgContainer.querySelector("svg");
         const stateManager = new StateManager(version);
         const polygonManager = new PolygonManager(svg, stateManager);
-        const textAnnotater = new TextAnnotater(svg);
+        const textAnnotater = new TextAnnotater(svg, version);
         const mapConfig = {
             width: info.mapWidth,
             height: info.mapHeight,
@@ -1601,7 +1665,7 @@ fieldset.collapsed *:not(legend){
             },
             initialZoom: 1
         }
-        const mapSvg = new MapSvg(svg, mapConfig);
+        const mapSvg = new MapSvg(svg, mapConfig, queryState);
         const locator = new Locator(svg, metadata, mapSvg);
         const popover = new Popover(svg, stateManager, metadata, polygonManager, locator, info)
         const saveManager = new SaveManager(stateManager, popover, polygonManager);
@@ -1609,27 +1673,32 @@ fieldset.collapsed *:not(legend){
         const svgManager = new SvgManager(svg, popover);
     }
     async function startApp(svgContainer, version) {
+        const svg = svgContainer.querySelector("svg");
+        if (svg) {
+            svg.remove();
+        }
+        
         const { infoFile, metadataFile, svgFile } = await loadVersion(version);
         const currentSvgContainerContent = svgContainer.innerHTML;
         const newInnerHTML = svgFile + currentSvgContainerContent;
         svgContainer.innerHTML = newInnerHTML;
-        await initApp(infoFile, metadataFile, version);
+        await initApp(svgContainer, infoFile, metadataFile, version);
+        const versionSelectorSelect = document.getElementById("version-selector-select");
+        versionSelectorSelect.value = version;
+        queryState.updateQuery({ v: version });
+        versionSelectorSelect.addEventListener('change', () => {
+            const version = versionSelectorSelect.value;
+            startApp(svgContainer, version);
+        });
     }
 
     const svgContainer = document.getElementById("svg-container");
     const versions = await fetch("versions.json").then(x => x.json());
     const versionSelectorSelect = document.getElementById("version-selector-select");
     let version = versions[0];
-    const query = window.location.search.split("?")[1];
-    if (query && query.length) {
-        const queryPaths = query.split("&");
-        for (const path of queryPaths) {
-            const pathParts = path.split("=");
-            if (pathParts[0] == "v") {
-                version = +queryParts[1];
-                break;
-            }
-        }
+    const queryVersion = queryState.state.v;
+    if (queryVersion && queryVersion.length) {
+        version = +queryVersion;
     }
     for (const ver of versions) {
         const option = document.createElement("option");
@@ -1638,10 +1707,7 @@ fieldset.collapsed *:not(legend){
         option.selected = version == ver;
         versionSelectorSelect.appendChild(option);
     }
-    versionSelectorSelect.addEventListener('change', async () => {
-        const version = versionSelectorSelect.value;
-        await startApp(svgContainer, version);
-    })
+    
     
     await startApp(svgContainer, version);
 }());
