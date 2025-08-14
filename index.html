@@ -18,6 +18,11 @@ svg {
     height: 100vh;
     width: 100vw;
 }
+#version-selector{
+    position: absolute;
+    top: 8px;
+    left: 8px;
+}
 #sidebar {
     position: absolute;
     border: 2px solid black;
@@ -943,10 +948,12 @@ fieldset.collapsed *:not(legend){
     const appName = "pz-map";
     class StateManager{
         appState;
-        constructor(saveKey) {
-            this.appState = JSON.parse(localStorage.getItem(appName)
+        version;
+        constructor(version) {
+            this.version = version;
+            this.appState = JSON.parse(localStorage.getItem(appName + "-" + version)
                 ?? "{\"saves\": {}}");
-            this.appState.lastSave = saveKey ?? this.getLastSave();
+            this.appState.lastSave = this.getLastSave();
             const currentState = this.getState();
             if (!currentState) {
                 this.appState.saves[this.appState.lastSave] = {};
@@ -961,7 +968,7 @@ fieldset.collapsed *:not(legend){
             return this.appState.saves[this.appState.lastSave];
         }
         saveState() {
-            localStorage.setItem(appName, JSON.stringify(this.appState));
+            localStorage.setItem(appName + "-" + this.version, JSON.stringify(this.appState));
         }
         
         removeStateItem(id) {
@@ -1573,14 +1580,14 @@ fieldset.collapsed *:not(legend){
 }())</script>
     <script>(async function () {
     async function loadVersion(version) {
-        const infoFile = await fetch(`/b${version}-info.json`).then(x => x.json());
-        const metadataFile = await fetch(`/b${version}-metadata.json`).then(x => x.json());
-        const svgFile = await fetch(`/b${version}-svg.svg`).then(x => x.text());
+        const infoFile = await fetch(`b${version}-info.json`).then(x => x.json());
+        const metadataFile = await fetch(`b${version}-metadata.json`).then(x => x.json());
+        const svgFile = await fetch(`b${version}-svg.svg`).then(x => x.text());
         return { infoFile, metadataFile, svgFile };
     }
-    async function initApp(info, metadata) {
+    async function initApp(info, metadata, version) {
         const svg = svgContainer.querySelector("svg");
-        const stateManager = new StateManager();
+        const stateManager = new StateManager(version);
         const polygonManager = new PolygonManager(svg, stateManager);
         const textAnnotater = new TextAnnotater(svg);
         const mapConfig = {
@@ -1604,15 +1611,14 @@ fieldset.collapsed *:not(legend){
     }
     async function startApp(svgContainer, version) {
         const { infoFile, metadataFile, svgFile } = await loadVersion(version);
-        console.log(infoFile, metadataFile);
         const currentSvgContainerContent = svgContainer.innerHTML;
         const newInnerHTML = svgFile + currentSvgContainerContent;
         svgContainer.innerHTML = newInnerHTML;
-        await initApp(infoFile, metadataFile);
+        await initApp(infoFile, metadataFile, version);
     }
 
     const svgContainer = document.getElementById("svg-container");
-    const versions = await fetch("/versions.json").then(x => x.json());
+    const versions = await fetch("versions.json").then(x => x.json());
     const versionSelectorSelect = document.getElementById("version-selector-select");
     let version = versions[0];
     const query = window.location.search.split("?")[1];
