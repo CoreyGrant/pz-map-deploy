@@ -7,29 +7,56 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
-    <style>#svg-container {
+    <style>* {
+    box-sizing: border-box;
+    font-family: "Roboto";
+    font-size: 16px;
+}
+
+legend{
+    font-size: 1.5em;
+}
+a{
+    font-size: 1em;
+}
+input, select, label, button, textarea{
+    font-size: 1em;
+}
+
+#svg-container {
     width: 100vw;
     height: 100vh;
     position: relative;
     display: flex;
 }
+fieldset{
+    border: 0.125em solid black;
+}
+fieldset.collapsed {
+    padding-top: 0.25em !important;
+    padding-bottom: 0.25em !important;
 
+}
+
+fieldset.collapsed *:not(legend) {
+    display: none !important;
+}
 svg {
     height: 100vh;
     width: 100vw;
 }
 #version-selector{
     position: absolute;
-    top: 8px;
-    left: 8px;
+    top: 0.5em;
+    left: 0.5em;
 }
 #sidebar {
     position: absolute;
-    border: 2px solid black;
-    right: 8px;
-    top: 8px;
-    height: calc(100% - 16px);
-    width: 300px;
+    border: 0.125em solid black;
+    right: 0.5em;
+    top: 0.5em;
+    height: calc(100% - 1em);
+    width: 20em;
     background-color: rgb(216, 211, 185);
     display: flex;
     flex-direction: column;
@@ -37,17 +64,15 @@ svg {
 }
 #pop-over {
     height: 50%;
-    padding: 8px;
-    width: calc(100% - 16px);
 }
 
 #pop-over-default {
-    font-size: 28px;
     height: 50%;
 }
 
-#pop-over-default p{
+#pop-over-default p {
     margin: 0;
+    font-size: 1.75em;
 }
 
 body {
@@ -58,39 +83,28 @@ body {
     height: 100vh;
 }
 
-* {
-    box-sizing: border-box;
-    font-family: "Roboto";
-}
-
 option{
     font-family: "Roboto";
 }
 
 #pop-over-checkboxes{
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
+    justify-content: space-between;
 }
 
 #pop-over-name {
-    font-size: 18px;
+    font-size: 1.5em;
     margin: 0;
-    margin-bottom: 8px;
+    margin-bottom: 0.125em;
 }
-
-#pop-over-looted, #pop-over-survivor, #pop-over-base {
-    display: flex;
-    justify-content: space-between;
-    font-size: 16px;
-}
-
 #pop-over-notes-container {
     display: flex;
     flex-direction: column;
 }
 
 #pop-over-notes {
-    height: 140px;
+    height: 9em;
     resize: none;
 }
 
@@ -99,42 +113,73 @@ option{
     justify-content: space-between;
     flex-wrap: wrap;
     overflow-y: auto;
-    max-height: 120px;
-    margin-top: 8px;
-    padding: 8px;
+    max-height: 10em;
+    margin-top: 0.5em;
+    padding: -0.25em;
 }
 
-.chip{
-    padding: 4px;
-    margin: 4px;
-    border: 1px solid black;
-    border-radius: 4px;
-    font-size: 10px;
+.chip {
+    padding: 0.25em;
+    margin-right: 0.25em;
+    margin-bottom: 0.25em;
+    border: 0.0625em solid black;
+    border-radius: 0.5em;
+    font-size: 0.875em;
+    cursor: pointer;
+}
+
+.chip.checkbox-chip {
+    padding: 0.25em;
+    margin-right: 0.25em;
+    margin-bottom: 0.25em;
+    border: 0.0625em solid black;
+    border-radius: 0.5em;
+    font-size: 1em;
+    display: flex;
+    justify-content: space-between;
+}
+.chip.checkbox-chip > label {
+    margin-right: 0.125em;
+    cursor: pointer;
+}
+.chip.checkbox-chip>label>span{
+    font-size: 1em;
+}
+.chip.checkbox-chip > input[type="checkbox"] {
+    margin: 0;
+    margin-top: 0.1em;
+    height: 1em;
+    width: 1em;
     cursor: pointer;
 }
 
 #pop-over-notes-container label {
-    font-size: 16px;
+    font-size: 1.5em;
 }
 
 input[type="checkbox"] {
-    height: 24px;
-    width: 24px;
+    height: 1.25em;
+    width: 1.25em;
 }
 
 #map-control {
-    width: 166px;
-    height: 216px;
-    padding: 8px;
-    margin-left: 8px;
-    margin-right: 8px;
+    font-size: 2em;
+    width: 9em;
+    height: 7em;
+    padding: 0.5em;
+    margin-left: 0.5em;
+    margin-right: 0.5em;
     position: relative;
     margin-top: auto;
 }
 
 #map-control button {
-    font-size: 32px;
+    font-size: 1em;
     border-radius: 0;
+}
+
+#map-control button span{
+    font-size: 1em;
 }
 
 #map-control-up, #map-control-down, #map-control-left, #map-control-right, #map-control-in, #map-control-out {
@@ -142,56 +187,51 @@ input[type="checkbox"] {
 }
 
 #map-control-up, #map-control-down, #map-control-left, #map-control-right {
-    width: 50px;
-    height: 50px;
+    width: 2em;
+    height: 2em;
 }
 
 #map-control-in, #map-control-out {
-    width: 75px;
-    height: 50px;
+    width: 2em;
+    height: 3em;
 }
 
 #map-control-up {
-    top: 8px;
-    left: 58px;
+    top: 0.5em;
+    left: 2.5em;
 }
 
 #map-control-down {
-    top: 108px;
-    left: 58px;
+    top: 4.5em;
+    left: 2.5em;
 }
 
 #map-control-left {
-    left: 8px;
-    top: 58px;
+    left: 0.5em;
+    top: 2.5em;
 }
 
 #map-control-right {
-    left: 108px;
-    top: 58px;
+    left: 4.5em;
+    top: 2.5em;
 }
 
 #map-control-in {
-    left: 8px;
-    top: 158px;
+    left: 6.5em;
+    top: 0.5em;
 }
 
 #map-control-out {
-    left: 83px;
-    top: 158px;
+    left: 6.5em;
+    top: 3.5em;
 }
 
 #save-manager {
-    display: flex;
     flex-direction: column;
-    padding: 8px;
-    width: calc(100% - 16px);
-    margin-left: 8px;
-    margin-right: 8px;
 }
 
 #save-manager-select{
-    min-width: 150px;
+    min-width: 10em;
 }
 
 #save-manager-new{
@@ -200,209 +240,90 @@ input[type="checkbox"] {
 legend{
     cursor: pointer;
 }
-fieldset.collapsed{
-    padding: 0 !important;
-}
-fieldset.collapsed *:not(legend){
-    display: none !important;
-}
+
 #save-manager-new label{
 }
 
 #save-manager-new input{
-    width: 200px;
-}
-
-#save-manager-new button{
-    width: 60px;
+    width: 12.5em;
 }
 
 #toolbar {
-    display: flex;
     flex-direction: column;
-    padding: 8px;
-    width: calc(100% - 16px);
-    margin-left: 8px;
-    margin-right: 8px;
 }
 #toolbar > div{
     display: flex;
 }
 
-#toolbar-input{
-    width: 150px;
-}
-
-#toolbar-button{
-    width: 50px;
-}
-
-#locator {
+.sidebar-section {
     display: flex;
-    padding: 8px;
-    width: calc(100% - 16px);
-    margin-left: 8px;
-    margin-right: 8px;
+    padding: 0.5em;
+    width: calc(100% - 1em);
+    margin-left: 0.5em;
+    margin-right: 0.5em;
 }
 
-#locator-select{
+.fieldset-form {
+    position: relative;
+    display: flex;
+    width: 100%;
+}
+.fieldset-form input[type="text"],
+.fieldset-form select {
+    width: 100%;
+}
+.fieldset-form .actions {
+    position: absolute;
+    top: -2.125em;
+    right: 0;
+    display: flex;
+    align-items: center;
+}
+.fieldset-form .actions button {
+    border: 0.0625em solid black;
+    border-radius: 0.75em;
+    width: 2.5em;
+    height: 1.5em;
+    background-color: rgb(216, 211, 185);
+    margin-left: 0.5em;
+    cursor: pointer;
+}
+.fieldset-form .actions button span {
+    font-size: 1.5em;
+    line-height: 0.875em;
+    cursor: pointer;
+}
+.fieldset-form .add {
+    
 }
 
+.fieldset-form .remove {
+} 
 
 </style>
-    <style>@media (max-width: 768px) {
-    #sidebar{
-        width: 150px;
-        right: 2px;
-        top: 2px;
-        height: 92%;
-    }
-
-    #pop-over, #pop-over-default{
-        height: 42%;
-        padding: 4px;
-    }
-
-    #pop-over-name {
-        font-size: 12px;
-        margin-bottom: 4px;
-    }
-
-    #pop-over-looted, #pop-over-survivor, #pop-over-base {
-        display: flex;
-        justify-content: space-between;
-        font-size: 10px;
-    }
-
-    #pop-over-notes {
-        height: 100px;
-    }
-
-    #pop-over-rooms {
-        margin-top: 4px;
-        max-height: 80px;
-        padding: 4px;
-    }
-
-    #pop-over-notes-container label {
-        font-size: 10px;
-    }
-
-    #map-control {
-        width: 104px;
-        height: 136px;
-        margin-left: 4px;
-        margin-right: 4px;
-    }
-
-    #map-control button {
+    <style>@media (max-width: 1200px) {
+    * {
         font-size: 14px;
     }
-
-    #map-control-up, #map-control-down, #map-control-left, #map-control-right {
-        width: 32px;
-        height: 32px;
+}
+@media (max-width: 992px) {
+    * {
+        font-size: 13px;
     }
-
-    #map-control-in, #map-control-out {
-        width: 48px;
-        height: 32px;
-    }
-
-    #map-control-up {
-        top: 4px;
-        left: 36px;
-    }
-
-    #map-control-down {
-        top: 66px;
-        left: 36px;
-    }
-
-    #map-control-left {
-        left: 4px;
-        top: 36px;
-    }
-
-    #map-control-right {
-        left: 66px;
-        top: 36px;
-    }
-
-    #map-control-in {
-        left: 4px;
-        top: 100px;
-    }
-
-    #map-control-out {
-        left: 52px;
-        top: 100px;
-    }
-    #save-manager{
-        margin-left: 4px;
-        margin-right: 4px;
-        flex-direction: column;
-        
-    }
-
-    #save-manager-new{
+}
+@media (max-width: 768px) {
+    * {
         font-size: 12px;
     }
-    #save-manager-new input {
-        margin-left: 0;
-        width: 100%;
+}
+@media (max-width: 480px) {
+    * {
+        font-size: 10px;
     }
-
-    #save-manager-new-container{
-        flex-direction: column;
-    }
-
-    #save-manager-new button {
-        width: 48%;
-    }
-    #save-manager-select {
-        min-width: 100px;
-    }
-    #toolbar{
-        padding: 4px;
-        margin-left: 4px;
-        margin-right: 4px;
-        flex-direction: column;
-    }
-    #toolbar > div{
-        flex-direction: column;
-    }
-    #toolbar-input {
-        width: 100px;
-    }
-
-    #toolbar-button {
-        width: 40px;
-    }
-    #locator{
-        padding: 4px;
-        margin-left: 4px;
-        margin-right: 4px;
-        flex-direction: column;
-    }
-    #locator-select{
-        width: 100%;
-        margin: 0;
-    }
-    #locator-button{
-        width: 50px;
-    }
-    .chip {
-        padding: 2px;
-        margin: 2px;
-        border: 1px solid black;
-        border-radius: 2px;
+}
+@media (max-width: 320px) {
+    * {
         font-size: 8px;
-    }
-
-    input[type="checkbox"] {
-        height: 14px;
-        width: 14px;
     }
 }
 </style>
@@ -416,21 +337,21 @@ fieldset.collapsed *:not(legend){
             </select>
         </div>
         <div id="sidebar">
-            <div id="pop-over-default">
+            <div id="pop-over-default" class="sidebar-section">
                 <p>Select a building</p>
             </div>
-            <div id="pop-over" style="display: none">
+            <div id="pop-over" style="display: none" class="sidebar-section">
                 <p id="pop-over-name"></p>
                 <div id="pop-over-checkboxes">
-                    <div id="pop-over-survivor">
+                    <div id="pop-over-survivor" class="chip checkbox-chip">
                         <label for="pop-over-survivor-input"><span style="text-decoration: underline">S</span>urvivor</label>
                         <input type="checkbox" id="pop-over-survivor-input" />
                     </div>
-                    <div id="pop-over-looted">
+                    <div id="pop-over-looted" class="chip checkbox-chip">
                         <label for="pop-over-looted-input"><span style="text-decoration: underline">L</span>ooted</label>
                         <input type="checkbox" id="pop-over-looted-input" />
                     </div>
-                    <div id="pop-over-base">
+                    <div id="pop-over-base" class="chip checkbox-chip">
                         <label for="pop-over-base-input"><span style="text-decoration: underline">B</span>ase</label>
                         <input type="checkbox" id="pop-over-base-input" />
                     </div>
@@ -443,46 +364,50 @@ fieldset.collapsed *:not(legend){
 
                 </div>
             </div>
-            <fieldset id="save-manager">
+            <fieldset id="save-manager" class="sidebar-section">
                 <legend>Save</legend>
-                <div id="save-manager-new-container" style="display: flex;">
+                <div id="save-manager-new-container" class="fieldset-form">
                     <select id="save-manager-select"></select>
-                    <div id="save-manager-show-new">
-                        <button id="save-manager-show-new-add">Add</button>
-                        <button id="save-manager-show-new-remove">Remove</button>
+                    <div id="save-manager-show-new" class="actions">
+                        <button id="save-manager-show-new-remove" title="Remove"><span>&#x1F5D1;</span></button>
+                        <button id="save-manager-show-new-add" title="Add"><span>+</span></button>
                     </div>
                 </div>
-                <div id="save-manager-new" style="display: none;">
+                <div id="save-manager-new" class="fieldset-form" style="display: none">
                     <input type="text" />
-                    <button id="save-manager-new-save">Save</button>
-                    <button id="save-manager-new-cancel">Cancel</button>
+                    <div class="actions">
+                        <button id="save-manager-new-cancel" class="remove"><span>&#x21BA;</span></button>
+                        <button id="save-manager-new-save"><span>&#x0001f4be;</span></button>
+                    </div>
                 </div>
             </fieldset>
-            <fieldset id="toolbar">
+            <fieldset id="toolbar" class="sidebar-section">
                 <legend>Add text</legend>
-                <div>
+                <div class="fieldset-form">
                     <input type="text" id="toolbar-input" />
-
-                    <button id="toolbar-button">Add</button>
+                    <div class="actions">
+                        <button id="toolbar-button" title="Add"><span>+</span></button>
+                    </div>
                 </div>
                 <div>
                     <select id="toolbar-size">
-                        <option value="14px" selected>Small</option>
-                        <option value="20px">Medium</option>
-                        <option value="32px">Large</option>
+                        <option value="12px">Tiny</option>
+                        <option value="18px" selected>Small</option>
+                        <option value="24px">Medium</option>
+                        <option value="40px">Large</option>
+                        <option value="72px">Huge</option>
                     </select>
-                    <select id="toolbar-color">
-                        <option value="rgb(0, 0, 0)" selected>Black</option>
-                        <option value="rgb(255,0,0)">Red</option>
-                        <option value="rgb(0,0,255)">Blue</option>
-                        <option value="rgb(0,255,0)">Green</option>
-                    </select>
+                    <input type="color" id="toolbar-color"/>
                 </div>
             </fieldset>
-            <fieldset id="locator">
+            <fieldset id="locator" class="sidebar-section">
                 <legend>Room Locator</legend>
-                <select id="locator-select"></select>
-                <button id="locator-button">Show</button>
+                <div class="fieldset-form">
+                    <select id="locator-select"></select>
+                    <div class="actions">
+                        <button id="locator-button">&#x1F50D;</button>
+                    </div>
+                </div>
             </fieldset>
         </div>
     </div>
@@ -627,8 +552,10 @@ fieldset.collapsed *:not(legend){
             const mapControl = document.createElement("div");
             mapControl.id = "map-control";
             function setElm(elm, id, text, onClick) {
+                const innerSpan = document.createElement("span");
+                innerSpan.innerHTML = text;
                 elm.id = id;
-                elm.innerHTML = text;
+                elm.appendChild(innerSpan);
                 elm.addEventListener("click", () => onClick());
             }
             const panUp = document.createElement("button");
@@ -810,13 +737,13 @@ fieldset.collapsed *:not(legend){
             let change = false;
             for (const name in queryState) {
                 const value = queryState[name];
-                if (name == "centrex") {
+                if (name.toLowerCase() == "centrex") {
                     this.centreX = +value;
                     change = true;
-                } else if (name == "centrey") {
+                } else if (name.toLowerCase() == "centrey") {
                     this.centreY = +value;
                     change = true;
-                } else if (name == "zoom") {
+                } else if (name.toLowerCase() == "zoom") {
                     let zoom = Math.floor(+value);
                     if (zoom > this.zoomLevels.length - 1) {
                         zoom = this.zoomLevels.length - 1;
@@ -1269,7 +1196,7 @@ fieldset.collapsed *:not(legend){
                 stateManager.upsertStateItem(id, "size", this.toolbarSizeSelect.value);
                 stateManager.upsertStateItem(id, "color", this.toolbarColorSelect.value);
                 stateManager.upsertStateItem(id, "toolbar", true);
-                polygonManager.updatePolygon(id);
+                polygonManager.updatePolygon(id, stateManager.getState());
                 this.toolbarTextValue = "";
                 this.svg.removeEventListener('click', svgClick);
             }
@@ -1608,13 +1535,8 @@ fieldset.collapsed *:not(legend){
             }));
 
             document.querySelectorAll("legend").forEach(x => x.addEventListener('click', function () {
-                const parent = this.parentNode;
-                const className = parent.className;
-                if (className === "collapsed") {
-                    parent.className = "";
-                } else {
-                    parent.className = "collapsed";
-                }
+                const parent = x.parentNode;
+                parent.classList.toggle("collapsed");
             }));
         }
     }
