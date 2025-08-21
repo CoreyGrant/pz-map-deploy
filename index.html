@@ -22,6 +22,9 @@ a{
 input, select, label, button, textarea{
     font-size: 1em;
 }
+input, select{
+    max-height: 2em;
+}
 
 #svg-container {
     width: 100vw;
@@ -32,7 +35,7 @@ input, select, label, button, textarea{
 fieldset{
     border: 0.125em solid black;
 }
-fieldset.collapsed {
+/*fieldset.collapsed {
     padding-top: 0.25em !important;
     padding-bottom: 0.25em !important;
 
@@ -40,7 +43,7 @@ fieldset.collapsed {
 
 fieldset.collapsed *:not(legend) {
     display: none !important;
-}
+}*/
 svg {
     height: 100vh;
     width: 100vw;
@@ -87,12 +90,6 @@ option{
     font-family: "Roboto";
 }
 
-#pop-over-checkboxes{
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-}
-
 #pop-over-name {
     font-size: 1.5em;
     margin: 0;
@@ -117,7 +114,12 @@ option{
     margin-top: 0.5em;
     padding: -0.25em;
 }
-
+.chip-set {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
 .chip {
     padding: 0.25em;
     margin-right: 0.25em;
@@ -298,7 +300,11 @@ legend{
 }
 
 .fieldset-form .remove {
-} 
+}
+
+.mobile{
+    display: none;
+}
 
 </style>
     <style>@media (max-width: 1200px) {
@@ -326,6 +332,99 @@ legend{
         font-size: 8px;
     }
 }
+
+@media(max-height: 2992px){
+    #map-control {
+        position: absolute;
+        left: 0.5em;
+        top: 0.5em;
+        border: 0.0625em solid black;
+        margin-top: 0;
+        margin-right: 0;
+        font-size: 1em;
+        margin: 0;
+        background-color: rgb(216, 211, 185);
+    }
+    legend {
+        background-color: rgb(216, 211, 185);
+    }
+    #version-selector{
+        top: 0.5em;
+        left: 10.5em;
+    }
+    #sidebar{
+        height: 0;
+        width: 0;
+        position: static;
+    }
+    #pop-over {
+        position: absolute;
+        top: 8em;
+        left: 0.5em;
+        min-width: 18em;
+        max-width: 18em;
+        height: 20em;
+        background-color: rgb(216, 211, 185);
+        border: 0.0625em solid black;
+        margin: 0;
+    }
+    #pop-over-notes{
+        height: 5em;
+    }
+    #pop-over-rooms{
+        height: 5.5em;
+    }
+    #pop-over-default {
+        position: absolute;
+        top: 8em;
+        left: 0.5em;
+        min-width: 18em;
+        max-width: 18em;
+        height: 20em;
+        background-color: rgb(216, 211, 185);
+        border: 0.0625em solid black;
+        margin: 0;
+    }
+    #save-manager {
+        height: 5em;
+        position: absolute;
+        top: 0.5em;
+        right: 0.5em;
+        min-width: 15em;
+        max-width: 15em;
+        background-color: rgb(216, 211, 185);
+    }
+    #toolbar {
+        height: 7em;
+        position: absolute;
+        top: 6em;
+        right: 0.5em;
+        min-width: 15em;
+        max-width: 15em;
+        background-color: rgb(216, 211, 185);
+    }
+    #locator {
+        height: 5em;
+        position: absolute;
+        top: 13.5em;
+        right: 0.5em;
+        min-width: 15em;
+        max-width: 15em;
+        background-color: rgb(216, 211, 185);
+    }
+    #layers {
+        height: 7em;
+        position: absolute;
+        top: 19em;
+        right: 0.5em;
+        min-width: 15em;
+        max-width: 15em;
+        background-color: rgb(216, 211, 185);
+    }
+    .mobile {
+        display: initial;
+    }
+}
 </style>
     <title>PZ Build 41 Map</title>
 </head>
@@ -342,7 +441,7 @@ legend{
             </div>
             <div id="pop-over" style="display: none" class="sidebar-section">
                 <p id="pop-over-name"></p>
-                <div id="pop-over-checkboxes">
+                <div id="pop-over-checkboxes" class="chip-set">
                     <div id="pop-over-survivor" class="chip checkbox-chip">
                         <label for="pop-over-survivor-input"><span style="text-decoration: underline">S</span>urvivor</label>
                         <input type="checkbox" id="pop-over-survivor-input" />
@@ -406,6 +505,27 @@ legend{
                     <select id="locator-select"></select>
                     <div class="actions">
                         <button id="locator-button">&#x1F50D;</button>
+                    </div>
+                </div>
+            </fieldset>
+            <fieldset id="layers" class="sidebar-section">
+                <legend>Layers</legend>
+                <div class="chip-set">
+                    <div class="chip checkbox-chip">
+                        <label for="layers-buildings">Buildings</label>
+                        <input type="checkbox" id="layers-buildings" checked />
+                    </div>
+                    <div class="chip checkbox-chip">
+                        <label for="layers-roads">Roads</label>
+                        <input type="checkbox" id="layers-roads" checked />
+                    </div>
+                    <div class="chip checkbox-chip">
+                        <label for="layers-names">Town names</label>
+                        <input type="checkbox" id="layers-names" checked />
+                    </div>
+                    <div class="chip checkbox-chip">
+                        <label for="layers-text">Text</label>
+                        <input type="checkbox" id="layers-text" checked />
                     </div>
                 </div>
             </fieldset>
@@ -1392,6 +1512,7 @@ legend{
                 text.setAttribute("x", annotation.location.x);
                 text.setAttribute("y", annotation.location.y);
                 text.innerHTML = annotation.text;
+                text.setAttribute("k", "town-name");
                 text.style.fontSize = annotation.fontSize;
                 text.style.fill = annotation.color;
                 text.style.textOrientation = annotation.orientation;
@@ -1440,6 +1561,7 @@ legend{
                 textSvgElement.style.fontSize = size;
                 textSvgElement.style.fill = color;
                 textSvgElement.id = id;
+                textSvgElement.setAttribute("k", "text");
                 textSvgElement.setAttribute("title", "Double-click to remove");
                 textSvgElement.setAttribute("x", location.x);
                 textSvgElement.setAttribute("y", location.y);
@@ -1488,7 +1610,7 @@ legend{
     <script>(function () {
     class SvgManager {
         constructor(svg, popover) {
-            const buildings = svg.querySelectorAll("polygon[k='building']")
+            const buildings = svg.querySelectorAll("polygon[k='b']")
 
             svg.addEventListener("click", function (e) {
                 popover.hide();
@@ -1534,14 +1656,51 @@ legend{
                 }
             }));
 
-            document.querySelectorAll("legend").forEach(x => x.addEventListener('click', function () {
-                const parent = x.parentNode;
-                parent.classList.toggle("collapsed");
-            }));
+            //document.querySelectorAll("legend").forEach(x => x.addEventListener('click', function () {
+            //    const parent = x.parentNode;
+            //    parent.classList.toggle("collapsed");
+            //}));
         }
     }
 
     window.SvgManager = SvgManager;
+}())</script>
+    <script>(function () {
+    class Layers {
+        roadsCheckbox;
+        buildingsCheckbox;
+        townNamesCheckbox;
+        textCheckbox;
+        constructor(svg) {
+            this.roadsCheckbox = document.getElementById("layers-roads");
+            this.buildingsCheckbox = document.getElementById("layers-buildings");
+            this.townNamesCheckbox = document.getElementById("layers-names");
+            this.textCheckbox = document.getElementById("layers-text");
+
+            this.buildingsCheckbox.addEventListener('change', () => {
+                const checked = this.buildingsCheckbox.checked;
+                svg.querySelectorAll("polygon[k=\"b\"]")
+                    .forEach(x => x.style.display = checked ? "initial" : "none");
+            });
+            this.roadsCheckbox.addEventListener('change', () => {
+                const checked = this.roadsCheckbox.checked;
+                svg.querySelectorAll("polygon[k=\"r\"]")
+                    .forEach(x => x.style.display = checked ? "initial" : "none");
+            });
+            this.townNamesCheckbox.addEventListener('change', () => {
+                const checked = this.townNamesCheckbox.checked;
+                svg.querySelectorAll("text[k=\"town-name\"]")
+                    .forEach(x => x.style.display = checked ? "initial" : "none");
+            });
+            this.textCheckbox.addEventListener('change', () => {
+                const checked = this.textCheckbox.checked;
+                svg.querySelectorAll("text[k=\"text\"]")
+                    .forEach(x => x.style.display = checked ? "initial" : "none");
+            });
+        }
+    }
+
+    window.Layers = Layers;
 }())</script>
     <script>(async function () {
     function setupReset() {
@@ -1607,6 +1766,7 @@ legend{
         const saveManager = new SaveManager(stateManager, popover, polygonManager);
         const toolbar = new Toolbar(stateManager, svg, mapSvg, polygonManager);
         const svgManager = new SvgManager(svg, popover);
+        const layers = new Layers(svg);
     }
     async function startApp(svgContainer, version) {
         const svg = svgContainer.querySelector("svg");
